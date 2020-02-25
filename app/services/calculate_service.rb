@@ -42,17 +42,32 @@ class CalculateService
 
   def calculate!
     begin
-      eval adapted_query
+      result = eval adapted_query
+
+      beautify(result)
     rescue StandardError, SyntaxError
       nil
     end
   end
 
+  def beautify(result)
+    (result - result.to_i).zero? ? result.to_i : result
+  end
+
   def adapted_query
+    all_integer_numbers_are_float!
+    to_ruby_math!
+
+    @query
+  end
+
+  def all_integer_numbers_are_float!
+    @query.gsub!(/([^\.])(\d+)([^\.])/, '\1\2.0\3')
+  end
+
+  def to_ruby_math!
     for query_sym, ruby_sym in TO_RUBY_MATH
       @query.gsub!(/#{Regexp.quote(query_sym)}/, ruby_sym)
     end
-
-    @query
   end
 end
