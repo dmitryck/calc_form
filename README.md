@@ -23,6 +23,6 @@ rails s
 
 ## Комментарии
 
-Математические вычисление делегируется `CalculateService` (папка `app/services`)
+Математические вычисления делегируются `CalculateService` (папка `app/services`)
 
-No tests version
+No tests version!

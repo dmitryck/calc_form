@@ -1,13 +1,11 @@
 class CalculateService
   SPACE = ' '.freeze
+  DOT = '.'.freeze
+  NUMBERS = %w[0 1 2 3 4 5 6 7 8 9].freeze
+  MATH_SYMBOLS = %w[+ - * : / ^ ( )].freeze
 
-  MATH_SYMBOLS = %w[
-    0 1 2 3 4 5 6 7 8 9
-    + - * : / ^
-    ( )
-  ].freeze
-
-  ALLOWED_SYMBOLS = MATH_SYMBOLS + [SPACE]
+  ALLOWED_SYMBOLS =
+    NUMBERS + [DOT] + MATH_SYMBOLS + [SPACE]
 
   FILTERED_MATH = '**'.freeze
 
@@ -44,25 +42,30 @@ class CalculateService
     begin
       result = eval adapted_query
 
-      beautify(result)
+      float_integer_resolver(result)
     rescue StandardError, SyntaxError
       nil
     end
   end
 
-  def beautify(result)
+  def float_integer_resolver(result)
     (result - result.to_i).zero? ? result.to_i : result
   end
 
   def adapted_query
-    all_integer_numbers_are_float!
+    all_integers_are_float!
     to_ruby_math!
 
     @query
   end
 
-  def all_integer_numbers_are_float!
-    @query.gsub!(/([^\.])(\d+)([^\.])/, '\1\2.0\3')
+  def all_integers_are_float!
+    nums = Regexp.quote(NUMBERS.join)
+    dot = Regexp.quote(DOT)
+
+    regexp = /(^|[^#{nums}#{dot}])([#{nums}]+)([^#{nums}#{dot}]|$)/
+
+    @query.gsub!(regexp, '\1\2.0\3')
   end
 
   def to_ruby_math!
