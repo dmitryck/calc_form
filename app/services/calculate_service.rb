@@ -5,7 +5,7 @@ class CalculateService
   MATH_SYMBOLS = %w[+ - * : / ^ ( )].freeze
 
   ALLOWED_SYMBOLS =
-    NUMBERS + [DOT] + MATH_SYMBOLS + [SPACE]
+    (NUMBERS + [DOT] + MATH_SYMBOLS + [SPACE]).freeze
 
   FILTERED_MATH = '**'.freeze
 
